@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetGuard - Links</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Consolas', 'Monaco', 'Lucida Console', 'Courier New', monospace;
+            box-sizing: border-box;
+            background-color: #0d1117;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Static Background Image */
+        #bg-image {
+            position: fixed;
+            z-index: -2;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('logo.png.jpg'); /* Updated to use your uploaded logo as background */
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15; /* Subtly faded into the background */
+        }
+
+        /* Custom Canvas Animation Overlay */
+        #network-canvas {
+            position: fixed;
+            z-index: -1;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        main {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 5em;
+            padding-bottom: 2em;
+        }
+
+        /* Profile header styling */
+        header {
+            text-align: center;
+            margin-bottom: 2em;
+        }
+
+        header h1 {
+            display: inline-block;
+            font-size: 2em;
+            font-weight: 700;
+            border-radius: 4px;
+            background-color: rgba(22, 27, 34, 0.7);
+            color: #58a6ff;
+            padding: 10px 30px;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            margin-top: 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            border: 1px solid rgba(88, 166, 255, 0.3);
+            letter-spacing: 2px;
+        }
+
+        /* The Links List */
+        ul {
+            box-sizing: border-box;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            max-width: 480px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Individual Link Buttons */
+        ul li {
+            width: 90%;
+            background-color: rgba(22, 27, 34, 0.7);
+            backdrop-filter: blur(10px) saturate(100%);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 10em;
+            margin: 0.8em 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: all 0.2s ease-in-out;
+            border: 1px solid rgba(88, 166, 255, 0.1);
+        }
+
+        ul li:hover {
+            transform: scale(1.03);
+            background-color: rgba(22, 27, 34, 0.9);
+            border-color: #58a6ff;
+            box-shadow: 0 0 15px rgba(88, 166, 255, 0.4);
+        }
+
+        ul li a {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 1.2em;
+            padding: 1.1em;
+            color: white;
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        ul li a i {
+            font-size: 1.4em;
+            color: #58a6ff;
+            transition: color 0.2s ease;
+        }
+        
+        ul li:hover a i {
+            color: white; 
+        }
+    </style>
+</head>
+<body>
+
+    <div id="bg-image"></div>
+    <canvas id="network-canvas"></canvas>
+    
+    <main>
+        <header>
+            <h1>NetGuard</h1>
+        </header>
+
+        <ul>
+            <li>
+                <a href="https://discord.gg/y5VHmqT3R" target="_blank">
+                    <i class="fa-brands fa-discord"></i> Discord
+                </a>
+            </li>
+            <li>
+                <a href="https://instagram.com/netguarddd" target="_blank">
+                    <i class="fa-brands fa-instagram"></i> Instagram
+                </a>
+            </li>
+            <li>
+                <a href="https://t.me/netguarddd" target="_blank">
+                    <i class="fa-brands fa-telegram"></i> Telegram
+                </a>
+            </li>
+            <li>
+                <a href="https://www.tiktok.com/@netguarddd?_r=1&_t=ZS-95P7gi14jGE" target="_blank">
+                    <i class="fa-brands fa-tiktok"></i> TikTok
+                </a>
+            </li>
+            <li>
+                <a href="https://www.facebook.com/share/1NBt4DZy7a/?mibextid=wwXIfr" target="_blank">
+                    <i class="fa-brands fa-facebook"></i> Facebook
+                </a>
+            </li>
+            <li>
+                <a href="https://youtube.com/@netguarddd?si=lCfTcLg6IUx-zbHD" target="_blank">
+                    <i class="fa-brands fa-youtube"></i> YouTube
+                </a>
+            </li>
+        </ul>
+    </main>
+
+    <script>
+        const canvas = document.getElementById('network-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+        const maxParticles = 100;
+        const connectionDistance = 150;
+        const particleSpeed = 0.3;
+        const netguardBlue = 'rgba(88, 166, 255, 0.3)';
+        
+        function init() {
+            resize();
+            createParticles();
+            animate();
+        }
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+
+        class Particle {
+            constructor(x, y) {
+                this.x = x || Math.random() * width;
+                this.y = y || Math.random() * height;
+                this.vx = (Math.random() - 0.5) * particleSpeed;
+                this.vy = (Math.random() - 0.5) * particleSpeed;
+                this.size = Math.random() * 2 + 0.5;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+            draw() {
+                ctx.fillStyle = netguardBlue;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function createParticles() {
+            for (let i = 0; i < maxParticles; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function drawConnections() {
+            for (let i = 0; i < maxParticles; i++) {
+                for (let j = i + 1; j < maxParticles; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < connectionDistance) {
+                        const opacity = 1 - dist / connectionDistance;
+                        ctx.strokeStyle = `rgba(88, 166, 255, ${opacity * 0.15})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            drawConnections();
+            requestAnimationFrame(animate);
+        }
+
+        init();
+    </script>
+</body>
+</html>
